@@ -5,8 +5,6 @@ from pydub import AudioSegment
 import threading
 import os
 
-#Probando el pull
-
 # Configuración del modelo Whisper
 model = whisper.load_model("base")
 
