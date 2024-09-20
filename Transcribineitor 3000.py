@@ -1,19 +1,15 @@
-import tkinter as tk
-from tkinter import filedialog, ttk, StringVar
+import sys
+import os
 import whisper
 from pydub import AudioSegment
 import threading
-import os
+from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, 
+                             QVBoxLayout, QLabel, QFileDialog, 
+                             QProgressBar, QLineEdit, QHBoxLayout)
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
 # Configuración del modelo Whisper
 model = whisper.load_model("base")
-
-# Función para convertir el archivo de audio a formato WAV (si no lo está ya)
-def convert_to_wav(file_path):
-    audio = AudioSegment.from_file(file_path)
-    wav_path = file_path.rsplit('.', 1)[0] + ".wav"
-    audio.export(wav_path, format="wav")
-    return wav_path
 
 # Función para dividir el archivo de audio en segmentos de 30 segundos
 def split_audio(file_path):
@@ -30,90 +26,124 @@ def split_audio(file_path):
 
     return segments
 
-# Función para transcribir los segmentos de audio
-def transcribe_segments(segments, progress_var, status_label):
-    total_segments = len(segments)
-    transcription = ""
+# Clase que ejecuta la transcripción en segundo plano
+class TranscriptionThread(QThread):
+    progress = pyqtSignal(int)
+    status_update = pyqtSignal(str)
 
-    status_label_var.set("Transcribiendo")
+    def __init__(self, segments):
+        super().__init__()
+        self.segments = segments
 
-    for i, segment_path in enumerate(segments):
-        print(f"Transcribing segment {i+1}/{total_segments}...")
-        result = model.transcribe(segment_path)
-        transcription += result['text'] + " "
-        progress_var.set((i + 1) / total_segments * 100)
+    def run(self):
+        total_segments = len(self.segments)
+        transcription = ""
 
-    write_to_file(transcription)
-    status_label_var.set("Finalizado")
+        self.status_update.emit("Transcribiendo")
 
-    # Eliminar archivos WAV después de la transcripción
-    for segment_path in segments:
-        os.remove(segment_path)
+        for i, segment_path in enumerate(self.segments):
+            result = model.transcribe(segment_path)
+            transcription += result['text'] + " "
+            self.progress.emit((i + 1) * 100 // total_segments)
+
+        write_to_file(transcription)
+        self.status_update.emit("Finalizado")
+
+        # Eliminar archivos WAV después de la transcripción
+        for segment_path in self.segments:
+            os.remove(segment_path)
 
 # Función para escribir la transcripción en un archivo
 def write_to_file(text):
     with open("Transcripcion.txt", "w") as file:
         file.write(text)
 
-# Función para abrir el cuadro de diálogo de selección de archivo
-def select_file():
-    file_path = filedialog.askopenfilename(
-        title="Seleccionar archivo de audio/video",
-        filetypes=(("Audio files", "*.wav *.mp3 *.mp4 *.avi *.m4a *.flac"), ("All files", "*.*"))
-    )
-    if file_path:
-        file_path_var.set(file_path)
-        progress_var.set(0)  # Reset progress bar
+# Clase principal de la interfaz
+class Transcribineitor(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.init_ui()
 
-# Función para iniciar la transcripción
-def start_transcription():
-    file_path = file_path_var.get()
-    if file_path:
-        status_label_var.set("No Iniciado")
-        segments = split_audio(file_path)
-        transcribe_thread = threading.Thread(target=transcribe_segments, args=(segments, progress_var, status_label))
-        transcribe_thread.start()
+    def init_ui(self):
+        self.setWindowTitle("Transcribineitor 3000")
+        self.setGeometry(300, 300, 600, 300)
 
-# Función para cerrar el programa
-def close_program():
-    root.quit()
+        # Layout principal vertical
+        layout = QVBoxLayout()
 
-# Configuración de la interfaz gráfica con tkinter
-root = tk.Tk()
-root.title("Transcribineitor 3000")
-root.geometry("500x300")
-root.configure(bg="#191414")  # Fondo verde estilo Spotify
+        # Grupo de selección de archivo (label + entry + botón)
+        file_layout = QHBoxLayout()
+        
+        # Etiqueta para el cuadro de texto de la ruta del archivo
+        self.file_path_label = QLabel("Ruta del archivo:", self)
+        file_layout.addWidget(self.file_path_label)
 
-# Variables
-progress_var = tk.DoubleVar()
-file_path_var = StringVar()
-status_label_var = StringVar(value="No Iniciado")
+        # Campo de entrada para la ruta del archivo
+        self.file_path_entry = QLineEdit(self)
+        file_layout.addWidget(self.file_path_entry)
 
-# Barra de progreso
-progress_bar = ttk.Progressbar(root, variable=progress_var, maximum=100)
-progress_bar.pack(pady=20, padx=20, fill=tk.X)
+        # Botón para seleccionar archivo
+        self.select_button = QPushButton("Seleccionar", self)
+        self.select_button.setStyleSheet("background-color: #1C8CDB; color: white;")
+        self.select_button.clicked.connect(self.select_file)
+        file_layout.addWidget(self.select_button)
 
-# Entry para la ruta del archivo
-file_path_entry = tk.Entry(root, textvariable=file_path_var, width=50)
-file_path_entry.pack(pady=10)
+        layout.addLayout(file_layout)
 
-# Botones
-select_button = tk.Button(root, text="Seleccionar Archivo de Audio/Video", command=select_file, bg="#1DB954", fg="#191414")
-select_button.pack(pady=10)
+        # Botones para acciones principales (transcripción)
+        button_layout = QHBoxLayout()
 
-start_button = tk.Button(root, text="Iniciar Transcripción", command=start_transcription, bg="#1DB954", fg="#191414")
-start_button.pack(pady=10)
+        # Botón para iniciar transcripción
+        self.start_button = QPushButton("Iniciar Transcripción", self)
+        self.start_button.setStyleSheet("background-color: #1C8CDB; color: white;")
+        self.start_button.clicked.connect(self.start_transcription)
+        button_layout.addWidget(self.start_button)
 
-close_button = tk.Button(root, text="Cerrar", command=close_program, bg="#1DB954", fg="#191414")
-close_button.pack(pady=10)
+        layout.addLayout(button_layout)
 
-# Estado de la transcripción
-status_label = tk.Label(root, textvariable=status_label_var, bg="#191414", fg="#1DB954")
-status_label.pack(pady=10)
+        # Barra de progreso
+        self.progress_bar = QProgressBar(self)
+        layout.addWidget(self.progress_bar)
 
-# Estilo para widgets
-style = ttk.Style()
-style.theme_use('clam')
-style.configure("TProgressbar", troughcolor="#191414", background="#1DB954")
+        # Etiqueta de estado
+        self.status_label = QLabel("Estado: No Iniciado", self)
+        layout.addWidget(self.status_label)
 
-root.mainloop()
+        # Botón para cerrar el programa (separado para evitar acciones accidentales)
+        self.close_button = QPushButton("Cerrar", self)
+        self.close_button.setStyleSheet("background-color: #1C8CDB; color: white;")
+        self.close_button.clicked.connect(self.close_program)
+        layout.addWidget(self.close_button)
+
+        self.setLayout(layout)
+
+    def select_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Seleccionar archivo de audio/video", "", 
+            "Audio files (*.wav *.mp3 *.mp4 *.avi *.m4a *.flac);;All files (*.*)"
+        )
+        if file_path:
+            self.file_path_entry.setText(file_path)
+            self.progress_bar.setValue(0)
+
+    def start_transcription(self):
+        file_path = self.file_path_entry.text()
+        if file_path:
+            segments = split_audio(file_path)
+            self.transcription_thread = TranscriptionThread(segments)
+            self.transcription_thread.progress.connect(self.progress_bar.setValue)
+            self.transcription_thread.status_update.connect(self.update_status)
+            self.transcription_thread.start()
+
+    def update_status(self, text):
+        self.status_label.setText(f"Estado: {text}")
+
+    def close_program(self):
+        self.close()
+
+# Configuración de la aplicación PyQt5
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    transcribineitor = Transcribineitor()
+    transcribineitor.show()
+    sys.exit(app.exec_())
