@@ -129,14 +129,29 @@ class Transcribineitor(QWidget):
     def start_transcription(self):
         file_path = self.file_path_entry.text()
         if file_path:
+            # Deshabilitar botones durante la transcripción
+            self.select_button.setDisabled(True)
+            self.start_button.setDisabled(True)
+            self.select_button.setStyleSheet("background-color: #A9A9A9; color: white;")
+            self.start_button.setStyleSheet("background-color: #A9A9A9; color: white;")
+
             segments = split_audio(file_path)
             self.transcription_thread = TranscriptionThread(segments)
             self.transcription_thread.progress.connect(self.progress_bar.setValue)
             self.transcription_thread.status_update.connect(self.update_status)
+            self.transcription_thread.finished.connect(self.transcription_finished)
             self.transcription_thread.start()
 
     def update_status(self, text):
         self.status_label.setText(f"Estado: {text}")
+
+    def transcription_finished(self):
+        # Habilitar botones nuevamente cuando finaliza la transcripción
+        self.select_button.setDisabled(False)
+        self.start_button.setDisabled(False)
+        self.select_button.setStyleSheet("background-color: #1C8CDB; color: white;")
+        self.start_button.setStyleSheet("background-color: #1C8CDB; color: white;")
+        self.status_label.setText("Estado: Finalizado")
 
     def close_program(self):
         self.close()
