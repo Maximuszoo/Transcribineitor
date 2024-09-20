@@ -1,8 +1,6 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, 
                              QLabel, QLineEdit, QFileDialog, QProgressBar)
-from PyQt5.QtCore import QThread
 from transcription import TranscriptionThread, split_audio
-from utils import write_to_file, remove_temp_files
 
 class Transcribineitor(QWidget):
     def __init__(self):

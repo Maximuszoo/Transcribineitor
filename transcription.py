@@ -1,6 +1,5 @@
 from PyQt5.QtCore import QThread, pyqtSignal
 import whisper
-import os
 from pydub import AudioSegment
 from utils import write_to_file, remove_temp_files
 
