@@ -24,9 +24,10 @@ class TranscriptionThread(QThread):
     progress = pyqtSignal(int)
     status_update = pyqtSignal(str)
 
-    def __init__(self, segments):
+    def __init__(self, segments, output_path="Transcripcion.txt"):
         super().__init__()
         self.segments = segments
+        self.output_path = output_path
 
     def run(self):
         total_segments = len(self.segments)
@@ -39,6 +40,6 @@ class TranscriptionThread(QThread):
             transcription += result['text'] + " "
             self.progress.emit((i + 1) * 100 // total_segments)
 
-        write_to_file(transcription)
+        write_to_file(transcription, self.output_path)
         self.status_update.emit("Finalizado")
         remove_temp_files(self.segments)

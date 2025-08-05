@@ -160,6 +160,7 @@ logs/
 # Configuraciones locales
 config.local.py
 settings.local.py
+config.json
 
 # Archivos del sistema
 .DS_Store
