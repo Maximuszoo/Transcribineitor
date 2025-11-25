@@ -9,11 +9,11 @@ Esta aplicación ofrece una interfaz gráfica moderna y fácil de usar, permitie
 ## 📸 Capturas de Pantalla
 
 <img width="697" height="490" alt="Modo_obscuro" src="https://github.com/user-attachments/assets/4629fdf9-8e54-4049-bc3f-d569b039986c" />
+
 *Modo oscuro*
 
-
-
 <img width="699" height="486" alt="Modo_claro" src="https://github.com/user-attachments/assets/2af010b0-79c9-48d5-8050-72912756cef4" />
+
 *Modo claro*
 
 ---
