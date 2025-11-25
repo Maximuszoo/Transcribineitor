@@ -8,15 +8,9 @@ Esta aplicación ofrece una interfaz gráfica moderna y fácil de usar, permitie
 
 ## 📸 Capturas de Pantalla
 
-<p align="center">
-  <img src="https://github.com/Maximuszoo/Transcribineitor/blob/main/Images/Modo_claro.png?raw=true" alt="Interfaz Modo Claro" width="45%">
-  &nbsp; &nbsp; &nbsp; &nbsp;
-  <img src="https://github.com/Maximuszoo/Transcribineitor/blob/main/Images/Modo_obscuro.png?raw=true" alt="Interfaz Modo Oscuro" width="45%">
-</p>
+<img width="697" height="490" alt="Modo_obscuro" src="https://github.com/user-attachments/assets/4629fdf9-8e54-4049-bc3f-d569b039986c" />
 
-<p align="center">
-  <em>Interfaz limpia y minimalista &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Modo oscuro</em>
-</p>
+<img width="699" height="486" alt="Modo_claro" src="https://github.com/user-attachments/assets/2af010b0-79c9-48d5-8050-72912756cef4" />
 
 ---
 
