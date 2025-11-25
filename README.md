@@ -8,10 +8,15 @@ Esta aplicación ofrece una interfaz gráfica moderna y fácil de usar, permitie
 
 ## 📸 Capturas de Pantalla
 
-| Modo Claro | Modo Oscuro |
-|:---:|:---:|
-| ![Interfaz Modo Claro](Images/Modo_claro.png) | ![Interfaz Modo Oscuro](Images/Modo_obscuro.png) |
-| *Interfaz limpia y minimalista* | *Modo oscuro para trabajar de noche* |
+<p align="center">
+  <img src="./Images/Modo_claro.png" alt="Interfaz Modo Claro" width="45%">
+  &nbsp; &nbsp; &nbsp; &nbsp;
+  <img src="./Images/Modo_obscuro.png" alt="Interfaz Modo Oscuro" width="45%">
+</p>
+
+<p align="center">
+  <em>Interfaz limpia y minimalista &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Modo oscuro</em>
+</p>
 
 ---
 
