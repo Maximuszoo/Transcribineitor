@@ -26,7 +26,7 @@ Esta aplicación ofrece una interfaz gráfica moderna y fácil de usar, permitie
     - Selección de archivo de audio de origen.
     - **Selección personalizada de ruta de salida**: Tú decides dónde y con qué nombre guardar la transcripción.
 - **🧠 Configuración Inteligente**: Recuerda tus preferencias (tema, últimas carpetas usadas) entre sesiones gracias a su gestor de configuración.
-- **📂 Soporte Multi-formato**: Compatible con `.mp3`, `.wav`, `.m4a`, `.flac`, `.ogg`.
+- **📂 Soporte Multi-formato**: Compatible con `.mp3`, `.wav`, `.m4a`, `.flac`, `.ogg` y más.
 - **⚡ Procesamiento Optimizado**: Divide automáticamente archivos largos en segmentos de 30 segundos para mayor estabilidad.
 - **📊 Feedback Visual**: Barra de progreso y actualizaciones de estado en tiempo real.
 - **🔒 Privacidad Total**: Todo el procesamiento se realiza localmente en tu máquina.
